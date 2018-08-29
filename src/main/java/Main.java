@@ -69,7 +69,7 @@ public class Main {
                 "</body></html>";
         try {
             // final byte[] bytes = generatePDFFrom(ok); // works!
-            final byte[] bytes = generatePDFFrom(html); // does work :(
+            final byte[] bytes = generatePDFFrom(html); // does NOT work :(
             try(FileOutputStream fos = new FileOutputStream("sample-file.pdf")) {
                 fos.write(bytes);
             }
