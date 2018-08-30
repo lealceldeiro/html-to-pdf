@@ -1,4 +1,5 @@
 import com.lowagie.text.DocumentException;
+import org.htmlcleaner.*;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
@@ -69,7 +70,7 @@ public class Main {
                 "</body></html>";
         try {
             // final byte[] bytes = generatePDFFrom(ok); // works!
-            final byte[] bytes = generatePDFFrom(html); // does work :(
+            final byte[] bytes = generatePDFFrom(html); // does work now:)
             try(FileOutputStream fos = new FileOutputStream("sample-file.pdf")) {
                 fos.write(bytes);
             }
@@ -80,8 +81,14 @@ public class Main {
     }
 
     private static byte[] generatePDFFrom(String html) throws IOException, DocumentException {
+        HtmlCleaner cleaner = new HtmlCleaner();
+        final TagNode rootTagNode = cleaner.clean(html);
+        CleanerProperties properties = cleaner.getProperties();
+        XmlSerializer xmlSerializer = new PrettyXmlSerializer(properties);
+        String cleanedHtml = xmlSerializer.getAsString(rootTagNode);
+
         final ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(html);
+        renderer.setDocumentFromString(cleanedHtml);
         renderer.layout();
         try (ByteArrayOutputStream fos = new ByteArrayOutputStream(html.length())) {
             renderer.createPDF(fos);
